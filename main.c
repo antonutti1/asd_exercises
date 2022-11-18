@@ -3,5 +3,6 @@
 
 int main() {
     esercizio7();
+
     return 0;
 }
