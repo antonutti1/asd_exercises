@@ -1,9 +1,22 @@
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
-#define MAX_LINE_SIZE 10000
 #define MAX 1000
+#define MAX_LINE_SIZE 256
+
+int scan_array(int *a){
+    char line[MAX_LINE_SIZE];
+    scanf("%[^\n]", line);
+    getchar();
+    int size = 0, offset = 0, numFilled, n;
+    do {
+        numFilled = sscanf(line + offset, "%d%n", &(a[size]), &n);
+        if(numFilled > 0){
+            size++;
+            offset += n;
+        }
+    } while (numFilled > 0);
+    return size;
+}
 
 char peek();
 int scanArray2(int *a);
@@ -33,15 +46,18 @@ int esercizio7() {
     int a[MAX];
     int size2;
 
-    size = scanArray2(n);
-    size2 = scanArray2(a);
+    size = scan_array(n);
+    size2 = scan_array(a);
 
     int c[size];
     c[0] = n[0];
     for(int i=1; i<size; i++)
         c[i] = c[i-1] + n[i];
 
-    for(int i=0; i<size2; i+=2){
+    for(int i=0; i<size2; i+=2)
+        printf("%d ", sommaIntervalloLinear(c, a[i], a[i+1]));
+
+    /**for(int i=0; i<size2; i+=2){
         //printf("%d", sommaIntervallo(n, a[i], a[i+1]));
         printf("%d", sommaIntervalloLinear(c, a[i], a[i+1]));
 
@@ -65,28 +81,9 @@ int esercizio7() {
 
         if(i<(size2-2))
             printf("%c", ' ');
-    }
+    }*/
 
     return 0;
-}
-
-int scanArray2(int *a){
-    int n;
-    int size = 0;
-    while(peek() != '\n'){
-        scanf("%d", &n);
-        a[size] = n;
-        size++;
-    }
-
-    fgetc(stdin);
-    return size;
-}
-
-char peek(){
-    char next = fgetc(stdin);
-    ungetc(next, stdin);
-    return next;
 }
 
 int sommaIntervallo(int *n, int i, int j){
@@ -98,14 +95,10 @@ int sommaIntervallo(int *n, int i, int j){
 }
 
 int sommaIntervalloLinear(int *n, int i, int j){
-    if(i!=j)
-        return n[j] - n[i];
-    else {
-        if(i==0)
-            return n[i];
-        else
-            return n[i] - n[i-1];
-    }
+    if(i==0)
+        return n[j];
+
+    return n[j] - n[i-1];
 }
 
 int prodottoIntervallo(int *n, int i, int j){
